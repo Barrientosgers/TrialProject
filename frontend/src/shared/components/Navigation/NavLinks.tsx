@@ -17,7 +17,7 @@ const NavLinks: React.FC = (props) => {
       <li>
         <NavLink to="/login">Sign In</NavLink>
       </li>
-      <li>
+      <li className={classes["nav-links__boxed"]}>
         <NavLink to="/join">Join</NavLink>
       </li>
       {/* {auth.isLoggedin && (
