@@ -6,6 +6,7 @@ import Header from "./Header";
 import NavLinks from "./NavLinks";
 import SideDrawer from "./SideDrawer";
 import { Link } from "react-router-dom";
+import SearchBar from "./SearchBar";
 
 const MainNavigation: React.FC = () => {
   const [drawerIsOpen, setDrawerIsOpen]: [
@@ -41,8 +42,15 @@ const MainNavigation: React.FC = () => {
           <span />
         </button>
         <h1 className={classes["main-navigation__title"]}>
-          <Link to="/">Logo</Link>
+          <Link to="/">
+            <img
+              className={classes.logo}
+              src={require("../../assets/among_us.png")}
+              alt="Logo"
+            />
+          </Link>
         </h1>
+        <SearchBar />
         <nav className={classes["main-navigation__header-nav"]}>
           <NavLinks />
         </nav>
