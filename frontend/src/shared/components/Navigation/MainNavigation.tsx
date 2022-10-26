@@ -8,7 +8,7 @@ import SideDrawer from "./SideDrawer";
 import { Link } from "react-router-dom";
 import SearchBar from "./SearchBar";
 
-const MainNavigation: React.FC = () => {
+const MainNavigation: React.FC<{ isLoggedIn: boolean }> = (props) => {
   const [drawerIsOpen, setDrawerIsOpen]: [
     boolean,
     React.Dispatch<React.SetStateAction<boolean>>
@@ -29,7 +29,7 @@ const MainNavigation: React.FC = () => {
       }
       <SideDrawer show={drawerIsOpen} onClick={closeDrawerHandler}>
         <nav className={classes["main-navigation__drawer-nav"]}>
-          <NavLinks />
+          <NavLinks isLoggedIn={props.isLoggedIn} />
         </nav>
       </SideDrawer>
       <Header>
@@ -53,7 +53,7 @@ const MainNavigation: React.FC = () => {
         </h1>
         <SearchBar />
         <nav className={classes["main-navigation__header-nav"]}>
-          <NavLinks />
+          <NavLinks isLoggedIn={props.isLoggedIn} />
         </nav>
       </Header>
     </React.Fragment>

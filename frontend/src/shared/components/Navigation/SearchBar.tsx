@@ -2,23 +2,23 @@ import React from "react";
 
 import classes from "./SearchBar.module.css";
 
-const DUMMY_SEARCH_AUTOFILL: string[] = [
-  "Abyssinian",
-  "Aegean",
-  "American Bobtail",
-  "American Curl",
-  "American Longhair",
-  "American Polydactyl",
-  "American Shorthair",
-  "American Wirehair",
-  "Asian Semi-Longhair",
-  "Australian Mist",
-  "Balinese",
-  "Bengal",
-  "Birman",
-  "Bombay",
-  "Brazilian Shorthair",
-];
+// const DUMMY_SEARCH_AUTOFILL: string[] = [
+//   "Abyssinian",
+//   "Aegean",
+//   "American Bobtail",
+//   "American Curl",
+//   "American Longhair",
+//   "American Polydactyl",
+//   "American Shorthair",
+//   "American Wirehair",
+//   "Asian Semi-Longhair",
+//   "Australian Mist",
+//   "Balinese",
+//   "Bengal",
+//   "Birman",
+//   "Bombay",
+//   "Brazilian Shorthair",
+// ];
 
 const SearchBar = () => {
   // TODO: implement melisearch for autofill here
