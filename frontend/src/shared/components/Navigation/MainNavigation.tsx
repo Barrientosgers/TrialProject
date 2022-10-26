@@ -43,11 +43,12 @@ const MainNavigation: React.FC = () => {
         </button>
         <h1 className={classes["main-navigation__title"]}>
           <Link to="/">
-            <img
+            {/* <img
               className={classes.logo}
               src={require("../../assets/among_us.png")}
               alt="Logo"
-            />
+            /> */}
+            Logo
           </Link>
         </h1>
         <SearchBar />
