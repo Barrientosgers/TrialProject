@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1",
+    "moongose": "^1.0.0"
+  }
+}
