@@ -14,10 +14,10 @@ const ListingGrid: () => JSX.Element = () => {
   const listings = DUMMY_LISTINGS.map((listing) => {
     return (
       <Card class="" id={listing.id}>
-        <Link to={`/listings/:${listing.id}`}>
+        <Link to={`/listing/${listing.id}`}>
           <img
             src="https://i.kym-cdn.com/photos/images/original/001/088/637/c67.jpg"
-            alt="sample-cat"
+            alt="sample-cat-photo"
           />
           <div className={classes.container}>
             <h4>
