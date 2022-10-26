@@ -21,7 +21,7 @@ const DUMMY_SEARCH_AUTOFILL: string[] = [
 ];
 
 const SearchBar = () => {
-  // TODO: implement melisearch some autofill here
+  // TODO: implement melisearch for autofill here
   const searchHandler = () => {
     console.log("search");
   };
