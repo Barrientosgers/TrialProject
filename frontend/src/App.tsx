@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 
 import "./App.css";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainNavigation from "./shared/components/Navigation/MainNavigation";
 import HomePage from "./home/pages/HomePage";
 import ListingPage from "./listings/pages/ListingPage";
+import UpdateListing from "./listings/pages/UpdateListing";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [isLoggedOut, setIsLoggedOut] = useState(false);
+
   //const navigate = useNavigate();
 
   const login = () => {
@@ -21,12 +19,17 @@ function App() {
     console.log(isLoggedIn);
   };
 
+  // const logout = () => {
+  //   setIsLoggedOut(false);
+  // };
+
   return (
     <Router>
       <MainNavigation isLoggedIn={isLoggedIn} />
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/listing/:lid/edit" element={<UpdateListing />} />
           <Route path="/listing/:lid" element={<ListingPage />} />
           <Route
             path="/login"
