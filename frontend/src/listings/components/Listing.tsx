@@ -5,8 +5,16 @@ import { Link } from "react-router-dom";
 import classes from "./Listing.module.css";
 
 const Listing: React.FunctionComponent<{
-  listing: { id: string; name: string; price: number };
+  listing: { id: string; title: string; price: number };
 }> = (props) => {
+  // const [editModal, setEditModal] = useState(false);
+  // const openEditModalHandler = () => {
+  //   setEditModal(true);
+  // };
+  // const closeEditModalHandler = () => {
+  //   setEditModal(false);
+  // };
+
   return (
     <React.Fragment>
       <div
@@ -21,16 +29,22 @@ const Listing: React.FunctionComponent<{
         >
           <div className={classes.checkout}>
             <h2>${props.listing.price}</h2>
-            <Link to="" className={classes["contact-button"]}>
-              Contact Seller
-            </Link>
+            <div>
+              <Link to="" className={classes["contact-button"]}>
+                Contact Seller
+              </Link>
+            </div>
+            <div>
+              {/* TODO: Change to if is loggedIn*/}
+              <Link to={`/listing/${props.listing.id}/edit`}>Edit</Link>
+            </div>
           </div>
           <div className={classes.checkout}></div>
         </div>
       </div>
       <div className={classes.main}>
         <nav className={classes["categories-breadcrumbs"]}></nav>
-        <h1 className={classes["listing-title"]}>{props.listing.name}</h1>
+        <h1 className={classes["listing-title"]}>{props.listing.title}</h1>
         <div className={classes["listing-img-container"]}>
           <img
             src="https://i.kym-cdn.com/photos/images/original/001/088/637/c67.jpg"
