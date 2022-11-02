@@ -5,10 +5,10 @@ import Listing from "../components/Listing";
 
 import classes from "./ListingPage.module.css";
 
-const DUMMY_LISTINGS: { id: string; name: string; price: number }[] = [
-  { id: "01", name: "Australian Cat", price: 300 },
-  { id: "02", name: "Cat", price: 500 },
-  { id: "03", name: "Cat", price: 3000 },
+const DUMMY_LISTINGS: { id: string; title: string; price: number }[] = [
+  { id: "01", title: "Australian Cat", price: 300 },
+  { id: "02", title: "Cat", price: 500 },
+  { id: "03", title: "Cat", price: 3000 },
 ];
 
 const ListingPage: () => JSX.Element = () => {
