@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 const fs = require("fs");
 const HttpError = require("../models/http-error");
 const Listing = require("../models/listing");
+const User = require("../models/user");
 const { default: mongoose } = require("mongoose");
 const listing = require("../models/listing");
 
@@ -64,20 +65,19 @@ const createListing = async (req, res, next) => {
       new HttpError("Invalid inputs. Please check the entered data", 422)
     );
   }
-  const { title, description, price, image, uid } = req.body;
+  const { title, description, price, image, creator } = req.body;
 
   const newListing = new Listing({
     title,
     description,
     price,
-    image: image, // req.file.path,
-    creator: uid, // req.userData.userId,
+    image, // req.file.path,
+    creator, // req.userData.userId,
   });
-  console.log(newListing);
 
   let user;
   try {
-    user = await User.findById(userId);
+    user = await User.findById(creator);
   } catch (err) {
     return next(
       new HttpError(
@@ -94,7 +94,7 @@ const createListing = async (req, res, next) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     await newListing.save({ session });
-    user.places.push(newListing);
+    user.listings.push(newListing);
     await user.save({ session });
     session.commitTransaction();
   } catch (err) {
@@ -107,6 +107,7 @@ const createListing = async (req, res, next) => {
 
   res.status(201).json({ listing: newListing });
 };
+
 const updateListing = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -116,6 +117,7 @@ const updateListing = async (req, res, next) => {
   }
 
   const listingId = req.params.lid;
+  let listing;
   try {
     listing = await Listing.findById(listingId);
   } catch (err) {
@@ -124,7 +126,8 @@ const updateListing = async (req, res, next) => {
     );
   }
 
-  if (listing.creator.toString() !== req.userData.uid) {
+  if (!listing.creator.toString()) {
+    // !== req.userData.uid) {
     return next(
       new HttpError(
         "You do not have the access rights to change this listing",
@@ -137,7 +140,7 @@ const updateListing = async (req, res, next) => {
   listing.title = title;
   listing.description = description;
   listing.price = price;
-  listing.imgae = image;
+  listing.image = image;
 
   try {
     await listing.save();
@@ -169,7 +172,8 @@ const deleteListing = async (req, res, next) => {
     );
   }
 
-  if (listing.creator.id !== req.userData.uid) {
+  if (!listing.creator.id) {
+    // !== req.userData.uid) {
     return next(
       new HttpError(
         "You do not have the access rights to change this listing",

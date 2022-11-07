@@ -47,14 +47,13 @@ app.use((error, req, res, next) => {
   res.status(error.code || 500);
   res.json({ message: error.message || "An unknown error occurred!" });
 });
-app.listen(process.env.PORT || 5000);
-// mongoose
-//   .connect(
-//     `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.pdb6zys.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
-//   )
-//   .then(() => {
-//     app.listen(process.env.PORT || 5000);
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
+mongoose
+  .connect(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.pdb6zys.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
+  )
+  .then(() => {
+    app.listen(process.env.PORT || 5001);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
