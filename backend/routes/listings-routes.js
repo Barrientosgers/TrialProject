@@ -1,6 +1,8 @@
 const express = require("express");
 const { check } = require("express-validator");
 
+const fileUpload = require("../middleware/file-upload");
+
 const listingsControllers = require("../controllers/listings-controller");
 // middleware inputs here
 

@@ -65,13 +65,13 @@ const createListing = async (req, res, next) => {
       new HttpError("Invalid inputs. Please check the entered data", 422)
     );
   }
-  const { title, description, price, image, creator } = req.body;
+  const { title, description, price, creator, image } = req.body;
 
   const newListing = new Listing({
     title,
     description,
     price,
-    image, // req.file.path,
+    image: image,
     creator, // req.userData.userId,
   });
 
@@ -136,15 +136,16 @@ const updateListing = async (req, res, next) => {
     );
   }
 
-  const { title, description, price, image } = req.body;
+  const { title, description, price } = req.body;
   listing.title = title;
   listing.description = description;
   listing.price = price;
-  listing.image = image;
+  // listing.image = title; // req.body.image;
 
   try {
     await listing.save();
   } catch (err) {
+    console.log(err);
     return next(
       new HttpError("Something went wrong, could not update the listing", 500)
     );
