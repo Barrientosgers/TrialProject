@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Input from "../../shared/components/FormElements/Input";
 import ImageUpload from "../../shared/components/FormElements/ImageUpload";
@@ -12,21 +12,15 @@ import { useForm } from "../../shared/hooks/form-hook";
 import Modal from "../../shared/components/UIElements/Modal";
 import Listing from "../../models/Listing";
 import Card from "../../shared/components/UIElements/Card";
-
-const DUMMY_LISTING_DATA = {
-  id: "01",
-  title: "Australian Cat",
-  description:
-    'Aegean cats are a medium-sized, muscular, semi-longhaired cat. The coat is bicolour or tricolour with one of the colours being almost always white. White usually takes up between 1/4 to 9/10 of the body. The colour of their coat might include many other colours and patterns. Their paws are medium in size and have a round shape. Their tail can be long and "hooked". The ears have a wide base and rounded tips and are covered by hair.',
-  price: 300,
-  image: "",
-};
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const UpdateListing = () => {
   const listingId = useParams().lid;
-  console.log(listingId);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedPlace, setLoadedPlace] = useState<Listing>();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const navigate = useNavigate();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -42,61 +36,80 @@ const UpdateListing = () => {
         value: "",
         isValid: false,
       },
-      image: {
-        value: "",
-        isValid: false,
-      },
+      // image: {
+      //   value: "",
+      //   isValid: false,
+      // },
     },
     false
   );
 
-  useEffect(() => {
-    const fetchPlace = async () => {
-      try {
-        // TODO: query backend here
-        setLoadedPlace(DUMMY_LISTING_DATA);
-        setFormData(
-          {
-            title: {
-              value: DUMMY_LISTING_DATA.title,
-              isValid: true,
-            },
-            description: {
-              value: DUMMY_LISTING_DATA.description,
-              isValid: true,
-            },
-            price: {
-              value: DUMMY_LISTING_DATA.price,
-              isValid: true,
-            },
-            image: {
-              value: DUMMY_LISTING_DATA.image,
-              isValid: true,
-            },
+  const fetchPlace = async () => {
+    console.log(`${process.env.REACT_APP_BACKEND_URL}/listing/${listingId}`);
+    try {
+      const responseData = await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/listing/${listingId}`
+      );
+      console.log(responseData.listing);
+      setLoadedPlace(responseData.listing);
+      setFormData(
+        {
+          title: {
+            value: responseData.listing.title,
+            isValid: true,
           },
-          true
-        );
-      } catch (err) {
-        // redirect to main
-      }
-    };
+          description: {
+            value: responseData.listing.description,
+            isValid: true,
+          },
+          price: {
+            value: responseData.listing.price,
+            isValid: true,
+          },
+          // image: {
+          //   value: responseData.listing.image,
+          //   isValid: true,
+          // },
+        },
+        true
+      );
+    } catch (err) {
+      // redirect to main
+    }
+  };
 
+  useEffect(() => {
     fetchPlace();
-  }, [setFormData]);
+  }, [listingId, setFormData, sendRequest]);
 
   // edit submit handler
-  const formSubmitHandler: (event: React.FormEvent<HTMLFormElement>) => void = (
-    event
-  ) => {
+  const editListingFormSubmitHandler: (
+    event: React.FormEvent<HTMLFormElement>
+  ) => void = async (event) => {
     event.preventDefault();
+    console.log("sending request");
     try {
-      const formData = new FormData();
-      formData.append("title", formState.inputs.title.value);
-      formData.append("description", formState.inputs.description.value);
-      formData.append("address", formState.inputs.address.value);
-      formData.append("image", formState.inputs.image.value);
-      console.log(formData);
-    } catch (err) {}
+      const response = await sendRequest(
+        `${process.env.REACT_APP_BACKEND_URL}/listing/${listingId}`,
+        "PATCH",
+        JSON.stringify({
+          title: formState.inputs.title.value,
+          description: formState.inputs.description.value,
+          price: formState.inputs.price.value,
+          // image: formState.inputs.image.value,
+        }),
+        {
+          "Content-Type": "application/json",
+          // Authorization: "Bearer " + auth.token,
+        }
+      );
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
+    // alert success to user
+    showSuccessModalHandler();
+    fetchPlace();
   };
   // redirect back to listing page
   const showDeleteWarningHandler = () => {
@@ -107,26 +120,37 @@ const UpdateListing = () => {
     setShowConfirmModal(false);
   };
 
+  const showSuccessModalHandler = () => {
+    setShowSuccessModal(true);
+  };
+
+  const hideSuccessModalHandler = () => {
+    console.log("oink");
+    setShowSuccessModal(false);
+  };
+
   // delete handler
-  const deleteHandler: (event: React.MouseEvent<HTMLButtonElement>) => void = (
-    event
-  ) => {
+  const deleteHandler: (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => void = async (event) => {
     setShowConfirmModal(false);
-    /*try {
+    try {
       await sendRequest(
-        process.env.REACT_APP_BACKEND_URL + `/places/${props.id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/listing/${listingId}`,
         "DELETE",
         null,
         {
-          Authorization: "Bearer " + auth.token,
+          // Authorization: "Bearer " + auth.token,
         }
       );
-      props.onDelete(props.id);
-    } catch (err) {}*/
-    // TODO: redirect to home
+    } catch (err) {
+      console.log(err);
+    }
+    console.log("successfully deleted");
+    navigate("/");
   };
 
-  if (!loadedPlace) {
+  if (!loadedPlace || error) {
     return (
       <div className="center">
         <Card>
@@ -156,56 +180,73 @@ const UpdateListing = () => {
           can't be undone thereafter.
         </p>
       </Modal>
-      <form
-        id="update-listing"
-        className="place-form"
-        onSubmit={formSubmitHandler}
+      <Modal
+        show={showSuccessModal}
+        onCancel={hideSuccessModalHandler}
+        header="Successfully updated"
+        footerClass="place-item__modal-actions"
+        footer={
+          <React.Fragment>
+            <button onClick={hideSuccessModalHandler}>OK</button>
+          </React.Fragment>
+        }
       >
-        <Input
-          id="title"
-          element="input"
-          type="text"
-          label="Title"
-          validators={[VALIDATOR_REQUIRE()]}
-          errorText="Please enter a valid title"
-          onInput={inputHandler}
-          initialValue={loadedPlace.title}
-          initialValid={true}
-        />
-        <Input
-          id="description"
-          element="textarea"
-          type="text"
-          label="Description"
-          validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
-          errorText="Please enter a valid description"
-          onInput={inputHandler}
-          initialValue={loadedPlace.description}
-          initialValid={true}
-        />
-        <Input
-          id="price"
-          element="input"
-          type="number"
-          label="Price"
-          validators={[VALIDATOR_REQUIRE(), VALIDATOR_MIN(0)]}
-          errorText="Please enter a valid price"
-          onInput={inputHandler}
-          initialValue={loadedPlace.price}
-          initialValid={true}
-        />
-        <ImageUpload
-          center
-          onInput={inputHandler}
-          id="image"
-          errorText="Please provide an image"
-          initialValue={loadedPlace.price}
-        />
-        <button type="submit" id="submit-button">
-          Submit
-        </button>
-      </form>
-      <button onClick={showDeleteWarningHandler}>Delete Listing</button>
+        <p>Successfully updated the listing.</p>
+      </Modal>
+      {!isLoading && loadedPlace && (
+        <form
+          id="update-listing"
+          className="place-form"
+          onSubmit={editListingFormSubmitHandler}
+        >
+          <Input
+            id="title"
+            element="input"
+            type="text"
+            label="Title"
+            validators={[VALIDATOR_REQUIRE()]}
+            errorText="Please enter a valid title"
+            onInput={inputHandler}
+            initialValue={loadedPlace.title}
+            initialValid={true}
+          />
+          <Input
+            id="description"
+            element="textarea"
+            type="text"
+            label="Description"
+            validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
+            errorText="Please enter a valid description"
+            onInput={inputHandler}
+            initialValue={loadedPlace.description}
+            initialValid={true}
+          />
+          <Input
+            id="price"
+            element="input"
+            type="number"
+            label="Price"
+            validators={[VALIDATOR_REQUIRE(), VALIDATOR_MIN(0)]}
+            errorText="Please enter a valid price"
+            onInput={inputHandler}
+            initialValue={loadedPlace.price}
+            initialValid={true}
+          />
+          {/* <ImageUpload
+            center
+            onInput={inputHandler}
+            id="image"
+            errorText="Please provide an image"
+            initialValue={loadedPlace.price}
+          /> */}
+          <button type="submit" id="submit-button">
+            Submit
+          </button>
+        </form>
+      )}
+      <button disabled={!formState.isValid} onClick={showDeleteWarningHandler}>
+        Delete Listing
+      </button>
     </React.Fragment>
   );
 };
