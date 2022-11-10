@@ -6,6 +6,8 @@ import MainNavigation from "./shared/components/Navigation/MainNavigation";
 import HomePage from "./home/pages/HomePage";
 import ListingPage from "./listings/pages/ListingPage";
 import UpdateListing from "./listings/pages/UpdateListing";
+import NewListing from "./listings/pages/NewListing";
+import NotFound from "./shared/pages/NotFound";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -40,6 +42,7 @@ function App() {
               </React.Fragment>
             }
           />
+          <Route path="/*" element={<NotFound />} />
         </Routes>
       </main>
     </Router>
