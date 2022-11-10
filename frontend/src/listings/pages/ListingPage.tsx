@@ -1,31 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import NotFound from "../../shared/pages/NotFound";
 import Listing from "../components/Listing";
-
+import { useHttpClient } from "../../shared/hooks/http-hook";
 import classes from "./ListingPage.module.css";
-
-const DUMMY_LISTINGS: { id: string; title: string; price: number }[] = [
-  { id: "01", title: "Australian Cat", price: 300 },
-  { id: "02", title: "Cat", price: 500 },
-  { id: "03", title: "Cat", price: 3000 },
-];
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 
 const ListingPage: () => JSX.Element = () => {
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [listing, setListing] = useState(null);
   const listingId = useParams().lid;
-  const isValidListing = DUMMY_LISTINGS.find(
-    (listing) => listing.id === listingId
-  );
-  console.log(isValidListing);
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const responseData = await sendRequest(
+          `${process.env.REACT_APP_BACKEND_URL}/listing/${listingId}`
+        );
+        setListing(responseData.listing);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchPlaces();
+  }, [sendRequest, listingId]);
 
   return (
-    <div className={classes["listing-page"]}>
-      {isValidListing && <Listing listing={isValidListing} />}
-      {!isValidListing && <NotFound />}
-      {
-        //isValidListing && <Suggestions />
-      }
-    </div>
+    <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
+
+      {!isLoading && (
+        <div className={classes["listing-page"]}>
+          {listing && <Listing listing={listing} />}
+          {!listing && <NotFound />}
+          {
+            //isValidListing && <Suggestions />
+          }
+        </div>
+      )}
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner />
+        </div>
+      )}
+    </React.Fragment>
   );
 };
 
