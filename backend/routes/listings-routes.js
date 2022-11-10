@@ -9,6 +9,7 @@ const listingsControllers = require("../controllers/listings-controller");
 const router = express.Router();
 
 router.get("/:lid", listingsControllers.getListingById);
+router.get("/", listingsControllers.getAllListings);
 router.get("/listings/:uid", listingsControllers.getListingsByUserId);
 
 // TODO: user needs to be authorized past this point

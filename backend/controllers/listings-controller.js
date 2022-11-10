@@ -56,6 +56,18 @@ const getListingsByUserId = async (req, res, next) => {
 };
 
 // TODO: Some API call to load them all? Or at least next 20 listings or something
+const getAllListings = async (req, res, next) => {
+  let listings;
+  try {
+    listings = await Listing.find();
+  } catch (err) {
+    console.log(err);
+    return new HttpError("Something went wrong, coud not find a place", 500);
+  }
+  res.json({
+    listings: listings.map((listing) => listing.toObject({ getters: true })),
+  });
+};
 
 // Creates new listing
 const createListing = async (req, res, next) => {
@@ -205,6 +217,7 @@ const deleteListing = async (req, res, next) => {
 
 exports.getListingById = getListingById;
 exports.getListingsByUserId = getListingsByUserId;
+exports.getAllListings = getAllListings;
 
 exports.createListing = createListing;
 exports.updateListing = updateListing;
