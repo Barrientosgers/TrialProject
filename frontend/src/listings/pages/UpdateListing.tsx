@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import Input from "../../shared/components/FormElements/Input";
-import ImageUpload from "../../shared/components/FormElements/ImageUpload";
+// import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MIN,
@@ -13,6 +13,9 @@ import Modal from "../../shared/components/UIElements/Modal";
 import Listing from "../../models/Listing";
 import Card from "../../shared/components/UIElements/Card";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import { Link } from "react-router-dom";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 
 const UpdateListing = () => {
   const listingId = useParams().lid;
@@ -36,21 +39,16 @@ const UpdateListing = () => {
         value: "",
         isValid: false,
       },
-      // image: {
-      //   value: "",
-      //   isValid: false,
-      // },
     },
     false
   );
 
-  const fetchPlace = async () => {
+  const fetchPlace = useCallback(async () => {
     console.log(`${process.env.REACT_APP_BACKEND_URL}/listing/${listingId}`);
     try {
       const responseData = await sendRequest(
         `${process.env.REACT_APP_BACKEND_URL}/listing/${listingId}`
       );
-      console.log(responseData.listing);
       setLoadedPlace(responseData.listing);
       setFormData(
         {
@@ -76,11 +74,11 @@ const UpdateListing = () => {
     } catch (err) {
       // redirect to main
     }
-  };
+  }, [listingId, sendRequest, setFormData]);
 
   useEffect(() => {
     fetchPlace();
-  }, [listingId, setFormData, sendRequest]);
+  }, [listingId, setFormData, sendRequest, fetchPlace]);
 
   // edit submit handler
   const editListingFormSubmitHandler: (
@@ -150,7 +148,7 @@ const UpdateListing = () => {
     navigate("/");
   };
 
-  if (!loadedPlace || error) {
+  if (!isLoading && (!loadedPlace || error)) {
     return (
       <div className="center">
         <Card>
@@ -163,6 +161,14 @@ const UpdateListing = () => {
   // modal for deletion
   return (
     <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
+
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner />
+        </div>
+      )}
+
       <Modal
         show={showConfirmModal}
         onCancel={cancelDeleteHandler}
@@ -247,6 +253,7 @@ const UpdateListing = () => {
       <button disabled={!formState.isValid} onClick={showDeleteWarningHandler}>
         Delete Listing
       </button>
+      <Link to={`/listing/${listingId}`}>Back to Listing</Link>
     </React.Fragment>
   );
 };
