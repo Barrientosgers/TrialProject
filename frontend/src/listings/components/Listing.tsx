@@ -5,16 +5,8 @@ import { Link } from "react-router-dom";
 import classes from "./Listing.module.css";
 
 const Listing: React.FunctionComponent<{
-  listing: { id: string; title: string; price: number };
+  listing: { id: string; title: string; description: string; price: number };
 }> = (props) => {
-  // const [editModal, setEditModal] = useState(false);
-  // const openEditModalHandler = () => {
-  //   setEditModal(true);
-  // };
-  // const closeEditModalHandler = () => {
-  //   setEditModal(false);
-  // };
-
   return (
     <React.Fragment>
       <div
@@ -52,34 +44,8 @@ const Listing: React.FunctionComponent<{
           />
         </div>
         <div className={classes.description}>
-          <h1>{Listing.name}</h1>
-          <p>
-            Aegean cats are a medium-sized, muscular, semi-longhaired cat. The
-            coat is bicolour or tricolour with one of the colours being almost
-            always white. White usually takes up between 1/4 to 9/10 of the
-            body. The colour of their coat might include many other colours and
-            patterns. Their paws are medium in size and have a round shape.
-            Their tail can be long and "hooked". The ears have a wide base and
-            rounded tips and are covered by hair.
-          </p>
-          <p>
-            Aegean cats are a medium-sized, muscular, semi-longhaired cat. The
-            coat is bicolour or tricolour with one of the colours being almost
-            always white. White usually takes up between 1/4 to 9/10 of the
-            body. The colour of their coat might include many other colours and
-            patterns. Their paws are medium in size and have a round shape.
-            Their tail can be long and "hooked". The ears have a wide base and
-            rounded tips and are covered by hair.
-          </p>
-          <p>
-            Aegean cats are a medium-sized, muscular, semi-longhaired cat. The
-            coat is bicolour or tricolour with one of the colours being almost
-            always white. White usually takes up between 1/4 to 9/10 of the
-            body. The colour of their coat might include many other colours and
-            patterns. Their paws are medium in size and have a round shape.
-            Their tail can be long and "hooked". The ears have a wide base and
-            rounded tips and are covered by hair.
-          </p>
+          <h1>{props.listing.title}</h1>
+          <p>{props.listing.description}</p>
         </div>
       </div>
     </React.Fragment>
